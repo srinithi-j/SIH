@@ -1,0 +1,20 @@
+[
+  {
+    "university_id": 1,
+    "name": "NIT Demo Campus",
+    "location": "Ranchi, Jharkhand",
+    "expertise": ["Water Management", "IoT", "Data Analytics", "Environmental Engineering"]
+  },
+  {
+    "university_id": 2,
+    "name": "Indian Institute of Water Sciences (Demo)",
+    "location": "Bhubaneswar, Odisha",
+    "expertise": ["Water Management", "Environmental Engineering", "Public Health", "Hydrology"]
+  },
+  {
+    "university_id": 3,
+    "name": "Rural Technology Institute (Demo)",
+    "location": "Pune, Maharashtra",
+    "expertise": ["Renewable Energy", "Agri-Tech", "IoT", "Rural Infrastructure"]
+  }
+]

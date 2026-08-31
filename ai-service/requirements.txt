@@ -1,0 +1,7 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+# Sentence-transformers is architected for but not required to run the
+# prototype (mocked scoring is used by default — see services/matching.py).
+# Uncomment when swapping in the real model:
+# sentence-transformers==3.1.1
