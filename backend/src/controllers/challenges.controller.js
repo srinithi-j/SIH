@@ -44,23 +44,6 @@ async function submitChallenge(req, res) {
        analysis.impact_score, JSON.stringify(analysis.required_skills || [])]
     );
 
-    // Immediately match universities for AI analysis (universities can see suggestions right away)
-    const matchResult = await aiService.matchHEIs({
-      title: challenge.title,
-      domain: challenge.domain,
-      description: challenge.description,
-    });
-    const matches = matchResult.matches || [];
-
-    for (const m of matches) {
-      await db.query(
-        `INSERT INTO challenge_matches (challenge_id, university_id, match_score, reasons)
-         VALUES ($1,$2,$3,$4)
-         ON CONFLICT DO NOTHING`,
-        [challenge.id, m.university_id, m.match_score, JSON.stringify(m.reasons || [])]
-      );
-    }
-
     await db.query(
       `UPDATE challenges SET status = 'PENDING_VALIDATION', updated_at = NOW() WHERE id = $1`,
       [challenge.id]
@@ -69,13 +52,13 @@ async function submitChallenge(req, res) {
     await db.query(
       `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, details)
        VALUES ($1,'SUBMIT_CHALLENGE','challenge',$2,$3)`,
-      [req.user.id, challenge.id, JSON.stringify({ challengeCode, matchesCount: matches.length })]
+      [req.user.id, challenge.id, JSON.stringify({ challengeCode, matchesCount: 0 })]
     );
 
     res.status(201).json({
       challenge: { ...challenge, status: 'PENDING_VALIDATION' },
       aiAnalysis: analysis,
-      matches,
+      matches: [],
     });
   } catch (err) {
     console.error('[challenges] submit error:', err);
