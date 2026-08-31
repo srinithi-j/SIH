@@ -166,6 +166,7 @@ async function reviewChallenge(req, res) {
     );
 
     let matches = [];
+    let updatedChallenge = challenge;
     if (action === 'APPROVE') {
       const matchResult = await aiService.matchHEIs({
         title: challenge.title,
@@ -184,11 +185,15 @@ async function reviewChallenge(req, res) {
       }
 
       if (matches.length > 0) {
-        await db.query(`UPDATE challenges SET status = 'HEI_MATCHED' WHERE id = $1`, [id]);
+        const finalResult = await db.query(
+          `UPDATE challenges SET status = 'HEI_MATCHED', updated_at = NOW() WHERE id = $1 RETURNING *`,
+          [id]
+        );
+        updatedChallenge = finalResult.rows[0];
       }
     }
 
-    res.json({ challenge, matches });
+    res.json({ challenge: updatedChallenge, matches });
   } catch (err) {
     console.error('[challenges] review error:', err);
     res.status(500).json({ error: 'Failed to review challenge' });
