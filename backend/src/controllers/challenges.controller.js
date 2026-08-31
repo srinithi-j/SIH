@@ -162,18 +162,19 @@ async function reviewChallenge(req, res) {
         await db.query(
           `INSERT INTO challenge_matches (challenge_id, university_id, match_score, reasons)
            VALUES ($1,$2,$3,$4)
-           ON CONFLICT DO NOTHING`,
+           ON CONFLICT (challenge_id, university_id) DO UPDATE SET
+             match_score = EXCLUDED.match_score,
+             reasons = EXCLUDED.reasons,
+             ranked_at = NOW()`,
           [id, m.university_id, m.match_score, JSON.stringify(m.reasons || [])]
         );
       }
 
-      if (matches.length > 0) {
-        const finalResult = await db.query(
-          `UPDATE challenges SET status = 'HEI_MATCHED', updated_at = NOW() WHERE id = $1 RETURNING *`,
-          [id]
-        );
-        updatedChallenge = finalResult.rows[0];
-      }
+      const finalResult = await db.query(
+        `UPDATE challenges SET status = 'HEI_MATCHED', updated_at = NOW() WHERE id = $1 RETURNING *`,
+        [id]
+      );
+      updatedChallenge = finalResult.rows[0];
     }
 
     res.json({ challenge: updatedChallenge, matches });

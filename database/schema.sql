@@ -164,6 +164,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_challenge_matches_unique ON challenge_matches(challenge_id, university_id);
 CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status);
 CREATE INDEX IF NOT EXISTS idx_challenges_domain ON challenges(domain);
 CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
