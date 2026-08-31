@@ -14,7 +14,9 @@ async function recommendedChallenges(req, res) {
        FROM challenge_matches cm
        JOIN challenges c ON c.id = cm.challenge_id
        LEFT JOIN challenge_ai_analysis a ON a.challenge_id = c.id
-       WHERE cm.university_id = $1 AND c.status NOT IN ('ADOPTED', 'IN_PROGRESS', 'DEPLOYED', 'CLOSED')
+       WHERE cm.university_id = $1
+         AND c.status IN ('VALIDATED', 'HEI_MATCHED')
+         AND c.status NOT IN ('ADOPTED', 'IN_PROGRESS', 'DEPLOYED', 'CLOSED')
        ORDER BY cm.match_score DESC, c.created_at DESC`,
       [university.id]
     );
