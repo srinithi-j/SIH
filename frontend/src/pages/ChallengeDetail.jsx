@@ -11,12 +11,24 @@ export default function ChallengeDetail() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [comment, setComment] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [attachmentFile, setAttachmentFile] = useState(null);
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   async function load() {
     setLoading(true);
     const { data } = await apiClient.get(`/challenges/${id}`);
     setData(data);
     setLoading(false);
+    
+    // Load messages
+    try {
+      const { data: messagesData } = await apiClient.get(`/challenges/${id}/messages`);
+      setMessages(messagesData.messages || []);
+    } catch (err) {
+      console.error('Failed to load messages:', err);
+    }
   }
 
   useEffect(() => { load(); }, [id]);
@@ -28,6 +40,32 @@ export default function ChallengeDetail() {
       await load();
     } finally {
       setActionLoading(false);
+    }
+  }
+
+  async function handleSendMessage() {
+    if (!newMessage.trim()) return;
+    
+    setSendingMessage(true);
+    try {
+      const formData = new FormData();
+      formData.append('message', newMessage);
+      if (attachmentFile) {
+        formData.append('file', attachmentFile);
+      }
+      
+      await apiClient.post(`/challenges/${id}/messages`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setNewMessage('');
+      setAttachmentFile(null);
+      await load();
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    } finally {
+      setSendingMessage(false);
     }
   }
 
@@ -109,6 +147,66 @@ export default function ChallengeDetail() {
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60">
               Reject
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Messages Section */}
+      {(challenge.status === 'INFO_REQUESTED' || (messages.length > 0 && challenge.status === 'PENDING_VALIDATION')) && (
+        <div className="bg-white border border-slate-100 shadow-sm rounded-xl p-6">
+          <h2 className="font-semibold text-gov-900 mb-4">Communication</h2>
+          
+          {messages.length > 0 && (
+            <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+              {messages.map((msg) => (
+                <div key={msg.id} className={`p-4 rounded-lg ${msg.sender_id === user.id ? 'bg-gov-50 ml-8' : 'bg-slate-50 mr-8'}`}>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="font-semibold text-sm text-gov-900">
+                      {msg.sender_name} ({msg.sender_role})
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      {new Date(msg.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-700">{msg.message}</p>
+                  {msg.attachment_url && (
+                    <div className="mt-2">
+                      <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer" 
+                        className="text-xs text-blue-600 hover:underline">
+                        📎 View Attachment
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="border-t border-slate-200 pt-4">
+            <textarea
+              placeholder="Type your message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm mb-3"
+              rows={3}
+            />
+            <div className="flex items-center gap-3">
+              {user.role === 'CITIZEN' && (
+                <input
+                  type="file"
+                  onChange={(e) => setAttachmentFile(e.target.files?.[0] || null)}
+                  accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                  className="text-sm"
+                />
+              )}
+              <button
+                onClick={handleSendMessage}
+                disabled={sendingMessage || !newMessage.trim()}
+                className="bg-gov-700 hover:bg-gov-900 text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60"
+              >
+                {sendingMessage ? 'Sending...' : 'Send Message'}
+              </button>
+            </div>
           </div>
         </div>
       )}

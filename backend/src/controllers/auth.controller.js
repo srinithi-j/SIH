@@ -60,12 +60,28 @@ async function me(req, res) {
 // Convenience endpoint so the frontend login page can list demo credentials.
 function demoAccounts(req, res) {
   res.json({
-    note: 'All demo accounts share the password: demo1234',
+    note: 'Each account has its own unique password as shown below',
     accounts: [
-      { role: 'CITIZEN', email: 'citizen@demo.in' },
-      { role: 'GOVERNMENT', email: 'gov@demo.in' },
-      { role: 'UNIVERSITY', email: 'university@demo.in' },
-      { role: 'INDUSTRY', email: 'industry@demo.in' },
+      // Citizen accounts
+      { role: 'CITIZEN', email: 'citizen1@demo.in', password: 'citizen1@123', name: 'Asha Kumari' },
+      { role: 'CITIZEN', email: 'citizen2@demo.in', password: 'citizen2@123', name: 'Ramesh Kumar' },
+      { role: 'CITIZEN', email: 'citizen3@demo.in', password: 'citizen3@123', name: 'Priya Singh' },
+      { role: 'CITIZEN', email: 'citizen4@demo.in', password: 'citizen4@123', name: 'Suresh Yadav' },
+      // Government accounts
+      { role: 'GOVERNMENT', email: 'gov1@demo.in', password: 'gov1@123', name: 'Rajeev Verma' },
+      { role: 'GOVERNMENT', email: 'gov2@demo.in', password: 'gov2@123', name: 'Anita Desai' },
+      { role: 'GOVERNMENT', email: 'gov3@demo.in', password: 'gov3@123', name: 'Vikram Patel' },
+      { role: 'GOVERNMENT', email: 'gov4@demo.in', password: 'gov4@123', name: 'Kavita Nair' },
+      // University accounts
+      { role: 'UNIVERSITY', email: 'uni1@demo.in', password: 'uni1@123', name: 'Dr. Meena Iyer' },
+      { role: 'UNIVERSITY', email: 'uni2@demo.in', password: 'uni2@123', name: 'Prof. Rajesh Gupta' },
+      { role: 'UNIVERSITY', email: 'uni3@demo.in', password: 'uni3@123', name: 'Dr. Sunil Sharma' },
+      { role: 'UNIVERSITY', email: 'uni4@demo.in', password: 'uni4@123', name: 'Prof. Lakshmi Menon' },
+      // Industry accounts
+      { role: 'INDUSTRY', email: 'ind1@demo.in', password: 'ind1@123', name: 'Karan Shah' },
+      { role: 'INDUSTRY', email: 'ind2@demo.in', password: 'ind2@123', name: 'Meera Reddy' },
+      { role: 'INDUSTRY', email: 'ind3@demo.in', password: 'ind3@123', name: 'Arjun Kapoor' },
+      { role: 'INDUSTRY', email: 'ind4@demo.in', password: 'ind4@123', name: 'Nisha Joshi' },
     ],
   });
 }

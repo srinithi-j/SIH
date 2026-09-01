@@ -5,7 +5,7 @@ import StatusPill from '../../components/StatusPill';
 
 export default function ChallengeReview() {
   const [challenges, setChallenges] = useState([]);
-  const [statusFilter, setStatusFilter] = useState('PENDING_VALIDATION');
+  const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

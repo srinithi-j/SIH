@@ -77,20 +77,30 @@ export default function Login() {
       {demoAccounts.length > 0 && (
         <div className="mt-6 pt-6 border-t border-slate-100">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Demo Accounts</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
             {demoAccounts.map((acc) => (
               <button
                 key={acc.email}
                 type="button"
-                onClick={() => setEmail(acc.email)}
-                className="text-left text-xs bg-slate-50 hover:bg-slate-100 rounded-md px-3 py-2 border border-slate-100"
+                onClick={() => {
+                  setEmail(acc.email);
+                  setPassword(acc.password);
+                }}
+                className="w-full text-left text-xs bg-slate-50 hover:bg-slate-100 rounded-md px-3 py-2 border border-slate-100 transition"
               >
-                <span className="block font-semibold text-gov-900">{acc.role}</span>
-                <span className="text-slate-500">{acc.email}</span>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="block font-semibold text-gov-900">{acc.name}</span>
+                    <span className="text-slate-500">{acc.email}</span>
+                  </div>
+                  <span className="text-xs text-slate-400 bg-white px-2 py-1 rounded border border-slate-200">
+                    {acc.role}
+                  </span>
+                </div>
               </button>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-2">Password for all demo accounts: demo1234</p>
+          <p className="text-xs text-slate-400 mt-2">Click any account to auto-fill credentials</p>
         </div>
       )}
     </div>

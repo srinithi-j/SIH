@@ -29,8 +29,8 @@ export default function Navbar() {
             <Link to={ROLE_HOME[user.role] || '/'} className="hover:text-gov-100">
               Dashboard
             </Link>
-            <span className="text-gov-100">
-              {user.name} <span className="opacity-70">({user.role})</span>
+            <span className="text-gov-100 font-medium">
+              {user.name}
             </span>
             <button
               onClick={handleLogout}
@@ -39,11 +39,7 @@ export default function Navbar() {
               Logout
             </button>
           </>
-        ) : (
-          <Link to="/login" className="bg-gov-600 hover:bg-gov-700 px-4 py-1.5 rounded-md transition">
-            Login
-          </Link>
-        )}
+        ) : null}
       </div>
     </nav>
   );

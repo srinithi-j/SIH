@@ -164,6 +164,25 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS challenge_messages (
+    id SERIAL PRIMARY KEY,
+    challenge_id INTEGER REFERENCES challenges(id) ON DELETE CASCADE,
+    sender_id INTEGER REFERENCES users(id),
+    message TEXT NOT NULL,
+    attachment_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS faculty_interest (
+    id SERIAL PRIMARY KEY,
+    challenge_id INTEGER REFERENCES challenges(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    university_id INTEGER REFERENCES universities(id) ON DELETE CASCADE,
+    status VARCHAR(50) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED')),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE UNIQUE INDEX IF NOT EXISTS idx_challenge_matches_unique ON challenge_matches(challenge_id, university_id);
 CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status);
 CREATE INDEX IF NOT EXISTS idx_challenges_domain ON challenges(domain);

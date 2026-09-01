@@ -5,11 +5,27 @@ import apiClient from '../../api/client';
 export default function RecommendedChallenges() {
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     apiClient.get('/university/recommended').then(({ data }) => setChallenges(data.challenges)).finally(() => setLoading(false));
   }, []);
+
+  async function handleInterest(challengeId, action) {
+    setActionLoading(prev => ({ ...prev, [challengeId]: true }));
+    try {
+      await apiClient.post(`/university/challenges/${challengeId}/interest`, { action });
+      // Reload challenges to update the list
+      const { data } = await apiClient.get('/university/recommended');
+      setChallenges(data.challenges);
+    } catch (err) {
+      console.error('Failed to process interest:', err);
+      alert(err.response?.data?.error || 'Failed to process interest');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [challengeId]: false }));
+    }
+  }
 
   async function handleAdoptAndCreate(challenge) {
     await apiClient.post(`/university/challenges/${challenge.id}/adopt`);
@@ -49,13 +65,31 @@ export default function RecommendedChallenges() {
             <ul className="text-sm text-slate-500 mt-2 list-disc list-inside">
               {(c.reasons || []).map((r, i) => <li key={i}>{r}</li>)}
             </ul>
-            {c.status !== 'ADOPTED' && c.status !== 'IN_PROGRESS' ? (
-              <button onClick={() => handleAdoptAndCreate(c)}
-                className="mt-4 bg-gov-700 hover:bg-gov-900 text-white px-4 py-2 rounded-lg text-sm font-semibold">
-                Adopt &amp; Create Project
-              </button>
+            {c.faculty_status === 'ACCEPTED' ? (
+              <div className="mt-4">
+                <p className="text-sm text-emerald-600 font-semibold mb-2">You have accepted this challenge</p>
+                <button onClick={() => handleAdoptAndCreate(c)}
+                  className="bg-gov-700 hover:bg-gov-900 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                  Create Project
+                </button>
+              </div>
+            ) : c.faculty_status === 'REJECTED' ? (
+              <p className="mt-4 text-sm text-slate-400">You have rejected this challenge</p>
             ) : (
-              <p className="mt-4 text-sm text-emerald-600 font-semibold">Already adopted</p>
+              <div className="mt-4 flex gap-3">
+                <button 
+                  onClick={() => handleInterest(c.id, 'ACCEPT')}
+                  disabled={actionLoading[c.id]}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60">
+                  {actionLoading[c.id] ? 'Processing...' : 'Accept'}
+                </button>
+                <button 
+                  onClick={() => handleInterest(c.id, 'REJECT')}
+                  disabled={actionLoading[c.id]}
+                  className="border border-red-600 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-60">
+                  {actionLoading[c.id] ? 'Processing...' : 'Reject'}
+                </button>
+              </div>
             )}
           </div>
         ))}

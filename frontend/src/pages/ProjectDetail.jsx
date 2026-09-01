@@ -12,6 +12,7 @@ export default function ProjectDetail() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState('');
 
   async function load() {
     setLoading(true);
@@ -26,6 +27,18 @@ export default function ProjectDetail() {
     const currentIndex = STAGE_ORDER.indexOf(data.project.status);
     const next = STAGE_ORDER[currentIndex + 1];
     if (!next) return;
+
+    // Validation: Check if faculty mentor and team members are assigned
+    if (!data.project.faculty_mentor) {
+      setError('Please assign a faculty mentor before advancing to the next stage.');
+      return;
+    }
+    if (!data.members || data.members.length === 0) {
+      setError('Please add team members before advancing to the next stage.');
+      return;
+    }
+
+    setError('');
     setUpdating(true);
     try {
       await apiClient.patch(`/projects/${id}/status`, { status: next });
@@ -53,6 +66,8 @@ export default function ProjectDetail() {
         </div>
         <p className="text-slate-600 mt-4">{project.objectives || 'No objectives set yet.'}</p>
         <p className="text-sm text-slate-500 mt-2">Faculty Mentor: {project.faculty_mentor || '—'}</p>
+
+        {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
 
         {(user?.role === 'UNIVERSITY' || user?.role === 'GOVERNMENT') && currentIndex < STAGE_ORDER.length - 1 && (
           <button onClick={advanceStatus} disabled={updating}

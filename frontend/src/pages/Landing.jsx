@@ -24,7 +24,7 @@ export default function Landing() {
             into measurable impact.
           </p>
           <div className="mt-8 flex justify-center gap-4">
-            <Link to="/login" className="bg-white text-gov-900 font-semibold px-6 py-3 rounded-lg hover:bg-gov-50 transition">
+            <Link to="/select-domain" className="bg-white text-gov-900 font-semibold px-6 py-3 rounded-lg hover:bg-gov-50 transition">
               Get Started
             </Link>
             <a href="#flow" className="border border-white/60 px-6 py-3 rounded-lg hover:bg-white/10 transition">

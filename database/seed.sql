@@ -12,12 +12,28 @@ INSERT INTO organizations (name, type, description, location) VALUES
 ('Gram Panchayat Demo Block', 'COMMUNITY', 'Local community body', 'Ranchi, Jharkhand')
 ON CONFLICT DO NOTHING;
 
--- password_hash below = bcrypt("demo1234")
+-- password_hash below = bcrypt for individual passwords
 INSERT INTO users (name, email, password_hash, role, organization_id, phone) VALUES
-('Asha Kumari', 'citizen@demo.in', '$2a$10$aKgfih6Bvqkf6P98bgLU6.uyshDxTSp2S78qFjn5i/2vUUCzIOYmm', 'CITIZEN', NULL, '9800000001'),
-('Rajeev Verma', 'gov@demo.in', '$2a$10$aKgfih6Bvqkf6P98bgLU6.uyshDxTSp2S78qFjn5i/2vUUCzIOYmm', 'GOVERNMENT', 1, '9800000002'),
-('Dr. Meena Iyer', 'university@demo.in', '$2a$10$aKgfih6Bvqkf6P98bgLU6.uyshDxTSp2S78qFjn5i/2vUUCzIOYmm', 'UNIVERSITY', 2, '9800000003'),
-('Karan Shah', 'industry@demo.in', '$2a$10$aKgfih6Bvqkf6P98bgLU6.uyshDxTSp2S78qFjn5i/2vUUCzIOYmm', 'INDUSTRY', 4, '9800000004')
+-- Citizen accounts
+('Asha Kumari', 'citizen1@demo.in', '$2a$10$AMCVveZczTbqaA4YZyTRk.dYYWnLfPpfU6Xmg2QD5QS1e5.OvfePe', 'CITIZEN', NULL, '9800000001'),
+('Ramesh Kumar', 'citizen2@demo.in', '$2a$10$PI5/gNrRVI5u2YxIIQVSrO3h3uleAY71PvCvZTWoPWpxyvERvsETS', 'CITIZEN', NULL, '9800000002'),
+('Priya Singh', 'citizen3@demo.in', '$2a$10$NTCZcVCtVBksstVbbXYkdudajaqGkOpAjlJy1GgI4lYfj7A.xb3um', 'CITIZEN', NULL, '9800000003'),
+('Suresh Yadav', 'citizen4@demo.in', '$2a$10$5tXyShhRvMn7iTDlLt2F/O4xKe2XFm6v9R.vL0Z/r.PvQ0csDwlzm', 'CITIZEN', NULL, '9800000004'),
+-- Government accounts
+('Rajeev Verma', 'gov1@demo.in', '$2a$10$vbE.wVIYOzLmWD1IR0m.Qe2TPRvjUvcg3vVso7oTSMIgRWdtRr4Wu', 'GOVERNMENT', 1, '9800000005'),
+('Anita Desai', 'gov2@demo.in', '$2a$10$N594kAoBswSr3LYWuXIIeupL0PxOAWxbJVoVUQwrs5FIvfqDr6yYW', 'GOVERNMENT', 1, '9800000006'),
+('Vikram Patel', 'gov3@demo.in', '$2a$10$MIHlr2YnSjz5EovwrfHDpeoc73x9194ncarQx2Xx43cExtqgpBwcy', 'GOVERNMENT', 1, '9800000007'),
+('Kavita Nair', 'gov4@demo.in', '$2a$10$2iFiXeOTViD0BC/iURcnDeRxXa9sc2./Ztpf.stc91JGlhuk2ut7O', 'GOVERNMENT', 1, '9800000008'),
+-- University accounts
+('Dr. Meena Iyer', 'uni1@demo.in', '$2a$10$/jEpg5ZVcZ/9BDisNfiMhO940swNUqb5QLkQjAgvez4KMq2LnsR9e', 'UNIVERSITY', 2, '9800000009'),
+('Prof. Rajesh Gupta', 'uni2@demo.in', '$2a$10$g8V9Q4a.V3y21ZKvDfaLBORsPG95OByElxVvWeu91Zj/3MgXWv8Je', 'UNIVERSITY', 2, '9800000010'),
+('Dr. Sunil Sharma', 'uni3@demo.in', '$2a$10$DMDRDCmcuLw/bKUqRpkwf.vXDAP9nof2QwPv2RiSMKQc4CZ2c5rIS', 'UNIVERSITY', 3, '9800000011'),
+('Prof. Lakshmi Menon', 'uni4@demo.in', '$2a$10$eAz/uPot4XuD19mVZMoZg.ypqmDETV1WLGs8H.RGyMNmRk/f74K0y', 'UNIVERSITY', 3, '9800000012'),
+-- Industry accounts
+('Karan Shah', 'ind1@demo.in', '$2a$10$27b/psjwpym7w7WXkNf/JOAxAX9XGVwMT9OzRKQt3TvisFx.E.WtO', 'INDUSTRY', 4, '9800000013'),
+('Meera Reddy', 'ind2@demo.in', '$2a$10$goZCax3YymlZPD1vmnCHZ.iD7YxvL03Po5k2kk3PNbvseNOWDlDqm', 'INDUSTRY', 4, '9800000014'),
+('Arjun Kapoor', 'ind3@demo.in', '$2a$10$fSZ029n5v655Qd3M8663HeB/g1y2Ud/uAPSlr4kXXqUL5/P07JVIK', 'INDUSTRY', 4, '9800000015'),
+('Nisha Joshi', 'ind4@demo.in', '$2a$10$zL7G9MqXRlmlaLBUoDXsZOeGDINidwJyrQPUd4puN0pL0yT/BbENa', 'INDUSTRY', 4, '9800000016')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO universities (organization_id, name, location, expertise_summary, active_projects_count, students_count, faculty_count) VALUES

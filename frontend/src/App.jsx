@@ -1,10 +1,13 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './routes/ProtectedRoute';
 
 import Landing from './pages/Landing';
 import Login from './pages/Login';
+import DomainSelection from './pages/DomainSelection';
+import Signup from './pages/Signup';
 import ChallengeDetail from './pages/ChallengeDetail';
 import ProjectDetail from './pages/ProjectDetail';
 
@@ -20,14 +23,24 @@ import RecommendedChallenges from './pages/university/RecommendedChallenges';
 
 import IndustryDashboard from './pages/industry/IndustryDashboard';
 
+const PUBLIC_ROUTES = ['/', '/login', '/select-domain', '/signup'];
+
 export default function App() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const isPublicRoute = PUBLIC_ROUTES.some(route => 
+    location.pathname === route || location.pathname.startsWith('/signup/')
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      {!isPublicRoute && <Navbar />}
       <main className="flex-1 pb-16">
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/select-domain" element={<DomainSelection />} />
+          <Route path="/signup/:domain" element={<Signup />} />
 
           <Route path="/citizen" element={<ProtectedRoute role="CITIZEN"><CitizenDashboard /></ProtectedRoute>} />
           <Route path="/citizen/report" element={<ProtectedRoute role="CITIZEN"><ReportChallenge /></ProtectedRoute>} />

@@ -7,7 +7,7 @@ const DOMAINS = ['Water Management', 'Healthcare', 'Education', 'Agriculture', '
 export default function ReportChallenge() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    title: '', description: '', domain: '', peopleAffected: '',
+    title: '', description: '', peopleAffected: '',
     district: '', block: '', village: '', existingInterventions: '',
   });
   const [imageFile, setImageFile] = useState(null);
@@ -24,12 +24,22 @@ export default function ReportChallenge() {
     setSubmitting(true);
     setError('');
     try {
-      // Image upload is a placeholder for the prototype — in production this
-      // would upload to object storage and send back a URL.
-      const { data } = await apiClient.post('/challenges', {
-        ...form,
-        peopleAffected: form.peopleAffected ? Number(form.peopleAffected) : null,
-        imageUrl: imageFile ? `placeholder://${imageFile.name}` : null,
+      const formData = new FormData();
+      formData.append('title', form.title);
+      formData.append('description', form.description);
+      formData.append('peopleAffected', form.peopleAffected || '');
+      formData.append('district', form.district || '');
+      formData.append('block', form.block || '');
+      formData.append('village', form.village || '');
+      formData.append('existingInterventions', form.existingInterventions || '');
+      if (imageFile) {
+        formData.append('file', imageFile);
+      }
+      
+      const { data } = await apiClient.post('/challenges', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       setResult(data);
     } catch (err) {
@@ -57,7 +67,7 @@ export default function ReportChallenge() {
           <button onClick={() => navigate('/citizen')} className="bg-gov-700 hover:bg-gov-900 text-white px-5 py-2 rounded-lg">
             View My Challenges
           </button>
-          <button onClick={() => { setResult(null); setForm({ title: '', description: '', domain: '', peopleAffected: '', district: '', block: '', village: '', existingInterventions: '' }); }} className="border border-slate-200 px-5 py-2 rounded-lg">
+          <button onClick={() => { setResult(null); setForm({ title: '', description: '', peopleAffected: '', district: '', block: '', village: '', existingInterventions: '' }); }} className="border border-slate-200 px-5 py-2 rounded-lg">
             Submit Another
           </button>
         </div>
@@ -82,20 +92,10 @@ export default function ReportChallenge() {
           <textarea required rows={4} value={form.description} onChange={(e) => update('description', e.target.value)}
             className="mt-1 w-full border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gov-600" />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium text-slate-700">Domain</label>
-            <select value={form.domain} onChange={(e) => update('domain', e.target.value)}
-              className="mt-1 w-full border border-slate-200 rounded-lg px-3 py-2">
-              <option value="">Let AI decide</option>
-              {DOMAINS.map((d) => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-slate-700">People Affected</label>
-            <input type="number" min="0" value={form.peopleAffected} onChange={(e) => update('peopleAffected', e.target.value)}
-              className="mt-1 w-full border border-slate-200 rounded-lg px-3 py-2" />
-          </div>
+        <div>
+          <label className="text-sm font-medium text-slate-700">People Affected</label>
+          <input type="number" min="0" value={form.peopleAffected} onChange={(e) => update('peopleAffected', e.target.value)}
+            className="mt-1 w-full border border-slate-200 rounded-lg px-3 py-2" />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div>
@@ -120,9 +120,14 @@ export default function ReportChallenge() {
             className="mt-1 w-full border border-slate-200 rounded-lg px-3 py-2" />
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-700">Photo (placeholder)</label>
-          <input type="file" onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-            className="mt-1 w-full text-sm" />
+          <label className="text-sm font-medium text-slate-700">Supporting Document/Image</label>
+          <input 
+            type="file" 
+            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+            className="mt-1 w-full text-sm"
+          />
+          <p className="text-xs text-slate-400 mt-1">Accepted formats: JPG, PNG, PDF, DOC, DOCX (Max 5MB)</p>
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
